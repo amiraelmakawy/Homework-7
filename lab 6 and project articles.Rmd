@@ -1,0 +1,143 @@
+---
+title: "lab 6"
+author: "Amira Elmakawy"
+date: "2022-11-04"
+output: html_document
+
+# Lab 6 Group names :
+
+# Muhibul Islam , Zakaria Sule , Liam O'Neill , Victoria K , Amira Elmakawy.
+---
+attach(Household_Pulse_data)
+# we do summary of the people who received the vaccine in the household pulse data first .
+
+summary(Household_Pulse_data$RECVDVACC)
+#we craeate the data to use :
+
+Household_Pulse_data$vaxx <- (Household_Pulse_data$RECVDVACC == "yes got vaxx")
+is.na(Household_Pulse_data$vaxx) <- which(Household_Pulse_data$RECVDVACC == "NA") 
+
+# we do the generic format for logit model :
+
+model_logit1 <- glm(RECVDVACC ~ EEDUC, family = binomial, data = Household_Pulse_data)
+summary(model_logit1)
+summary(as.numeric(Household_Pulse_data$RECVDVACC))
+table(Household_Pulse_data$vaxx,Household_Pulse_data$EEDUC)
+
+
+
+#since we got that RECVACC has 3 levels and we're doing only 2 levels ,
+# so we remove the "NA's" by :
+
+Household_Pulse_data$vaxx <- (Household_Pulse_data$RECVDVACC == "yes got vaxx")
+summary(Household_Pulse_data$vaxx)
+# now we did it as two levels.
+# We want to subset :
+pick_use1 <- (Household_Pulse_data$TBIRTH_YEAR < 2000)
+dat_use1 <- subset(Household_Pulse_data, pick_use1)
+dat_use1$RECVDVACC <- droplevels(dat_use1$RECVDVACC)
+
+# So start from this baseline model and launch ahead , 
+
+model_logit2 <- glm(vaxx ~ EEDUC + MS + RRACE +  GENID_DESCRIBE,
+                    family = binomial, data = dat_use1)
+summary(model_logit2)
+
+to_be_predicted2 <- data.frame(EEDUC = "some coll", MS = "divorced", RRACE = "White", GENID_DESCRIBE = "female", data = dat_use1)
+to_be_predicted$yhat <- predict(model_logit2, to_be_predicted, type = "response")
+
+summary(to_be_predicted$yhat)
+# The predicted probability of the divorced white females with some college who got vaxxed is 0.828.
+# Almost all of the variables are statistically significant with the vaccination status.
+
+
+
+new_data_to_be_predicted <- data.frame(TBIRTH_YEAR = 1990,
+                                       EEDUC = factor("bach deg", levels = levels(dat_use1$EEDUC)),
+                                       MS = factor("never",levels = levels(dat_use1$MS)),
+                                       RRACE = factor("Black",levels = levels(dat_use1$RRACE)),
+                                       RHISPANIC = factor("Hispanic",levels = levels(dat_use1$RHISPANIC)),
+                                       GENID_DESCRIBE = factor("male", levels = levels(dat_use1$GENID_DESCRIBE))
+)
+predict(model_logit1,new_data_to_be_predicted)
+
+# Result : 4.423
+
+new_data_to_be_predicted <- data.frame(TBIRTH_YEAR = 1996,
+                                       EEDUC = factor("some coll", levels = levels(dat_use1$EEDUC)),
+                                       MS = factor("married",levels = levels(dat_use1$MS)),
+                                       RRACE = factor("white",levels = levels(dat_use1$RRACE)),
+                                       RHISPANIC = factor("Not Hispanic",levels = levels(dat_use1$RHISPANIC)),
+                                       GENID_DESCRIBE = factor("Female", levels = levels(dat_use1$GENID_DESCRIBE))
+)
+predict(model_logit1,new_data_to_be_predicted)
+
+# Result : 4.394
+
+
+
+
+# Probit model : 
+
+model_probit1 <- glm(vaxx ~ EEDUC + MS + RRACE  + GENID_DESCRIBE + ANYWORK*INCOME,
+                     family = binomial (link = 'probit'), data = dat_use1)
+summary(model_probit1)
+to_be_predicted3<- data.frame(EEDUC = "some coll", MS = "separated", RRACE = "Asian", GENID_DESCRIBE = "female",
+                              ANYWORK = "no employment in last 7 days", INCOME= "HH income $150 - 199
+
+",  data = dat_use1)
+to_be_predicted3$yhat<-predict(model_probit1, to_be_predicted3, type="response")
+summary(to_be_predicted3$yhat)
+
+
+
+
+For the final project : 
+
+
+
+Project group : Amira Elmakawy , Zakaria Sule , Muhibul Islam.
+
+Article #1 : “LABOR MARKETS DURING THE COVID-19 CRISIS: “
+
+Data : data from The Nielsen Company (US), LLC and marketing databases provided by the Kilts Center for Marketing Data Center at The University of Chicago Booth School of Business.
+
+This paper documents several facts  : 
+
+It analyzes the data using reasons for not looking for a job .
+
+Job loss was actually larger than the one implied by the new unemployment claims.
+
+The number of lost jobs is almost more than the jobs lost over the Great Recession period.
+
+The participation in the labor force has declined .
+
+Results : 
+
+The employment-to-population ratio has declined. analyzing the data using reasons for not looking for a job .
+
+Large portions had been reported that they’re not even actively looking for work but at the same time counted between the existing labor force.
+
+https://www.nber.org/system/files/working_papers/w27017/w27017.pdf
+
+Article #2 : “Changes in the Employment Status of PeopleWith and Without Disabilities in the United States During the COVID-19 Pandemic”
+
+It analyzes the employment trends during pandemic and to understand the economic effect of the pandemic on persons with and without disabilities.
+
+Data :  “The monthly public use microdata files of the Current Population Survey (CPS)”
+
+
+
+
+Results : 
+
+Between February 2020 to April 2020  , The employment rate decreased by 4.7% for people with disabilities .
+
+The percentage of unemployed rose by 3.5% for persons with disabilities & by 7.6% for people without disabilities.
+
+The percentage of actively looking for work decreased by 63.8% for unemployed persons with disabilities , and by 61.9% for unemployed people without disabilities.
+
+But in the succeeding months , The lay-off percentage decreased while the percentage of looking for work increased.
+
+https://reader.elsevier.com/reader/sd/pii/S0003999321003002?token=B7C99CCF95959A625BE85C79E8757F0330F8BCCB8DB66C23FAC7ACD2668188DF5461D6E2C781A85C2215F23983ED8648&originRegion=us-east-1&originCreation=20221104055129
+
