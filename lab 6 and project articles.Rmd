@@ -92,11 +92,11 @@ summary(to_be_predicted3$yhat)
 
 
 
-For the final project : 
+# For the final project : 
 
 
 
-Project group : Amira Elmakawy , Zakaria Sule , Muhibul Islam.
+# Project group : Amira Elmakawy , Zakaria Sule , Muhibul Islam.
 
 Article #1 : “LABOR MARKETS DURING THE COVID-19 CRISIS: “
 
