@@ -126,9 +126,6 @@ It analyzes the employment trends during pandemic and to understand the economic
 
 Data :  “The monthly public use microdata files of the Current Population Survey (CPS)”
 
-
-
-
 Results : 
 
 Between February 2020 to April 2020  , The employment rate decreased by 4.7% for people with disabilities .
